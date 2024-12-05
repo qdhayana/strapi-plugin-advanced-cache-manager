@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { 
   Typography,
   Button,
-  HeaderLayout,
-  ContentLayout,
+  Main,
   Box,
   Flex
 } from '@strapi/design-system';
@@ -35,75 +34,77 @@ const HomePage = () => {
   };
 
   return (
-    <>
-      <HeaderLayout
-        title={name}
-        subtitle="Clear Website Cache"
-        as="h2"
-      />
-      <ContentLayout>
-        <Box padding={4}>
-          <Flex direction="column" gap={6}>
-            <Flex gap={4}>
-              <Box flex={6}>
-                <Typography variant="delta" as="h2">
-                  1. Clear content related short cache.
-                </Typography>        
-              </Box>
-              <Box flex={4}>
-                <Button
-                  onClick={() => handleSubmit('short_cache')}
-                  startIcon={<Trash />}
-                  size="M"
-                  disabled={isButton1Loading}
-                  loading={isButton1Loading}
-                >
-                  Clear
-                </Button>
-              </Box>   
-            </Flex>
-
-            <Flex gap={4}>
-              <Box flex={6}>
-                <Typography variant="delta" as="h2">
-                  2. Clear all website cache, website will have a performance hit before cache regenerated.
-                </Typography>        
-              </Box>
-              <Box flex={4}>
-                <Button
-                  onClick={() => handleSubmit('purge_all')}
-                  startIcon={<Trash />}
-                  size="M"
-                  disabled={isButton2Loading}
-                  loading={isButton2Loading}
-                >
-                  Clear
-                </Button>
-              </Box>
-            </Flex>
-
-            <Flex gap={4}>
-              <Box flex={6}>
-                <Typography variant="delta" as="h2">
-                  3. Clear AWS CDN cache for all pages and assets. It may takes up to 10 mins.
-                </Typography>        
-              </Box>
-              <Box flex={4}>
-                <Button
-                  onClick={() => handleSubmit('purge_cdn')}
-                  startIcon={<Trash />}
-                  size="M"
-                  disabled={isButton3Loading}
-                  loading={isButton3Loading}
-                >
-                  Clear
-                </Button>
-              </Box>
-            </Flex>
+    <Main>
+    <Box padding={8} background="neutral100">
+      <Box paddingBottom={4}>
+        <Typography variant="alpha" as="h1">
+          {name}
+        </Typography>
+        <Typography variant="epsilon">Clear Website Cache</Typography>
+      </Box>
+      
+      <Box padding={4} background="neutral0" shadow="filterShadow">
+        <Flex direction="column" gap={6}>
+          <Flex gap={4} alignItems="center">
+            <Box flex={6}>
+              <Typography variant="delta">
+                1. Clear content related short cache.
+              </Typography>        
+            </Box>
+            <Box flex={4}>
+              <Button
+                onClick={() => handleSubmit('short_cache')}
+                startIcon={<Trash />}
+                variant="secondary"
+                disabled={isButton1Loading}
+                loading={isButton1Loading}
+              >
+                Clear
+              </Button>
+            </Box>   
           </Flex>
-        </Box>
-      </ContentLayout>
-    </>
+
+          <Flex gap={4} alignItems="center">
+            <Box flex={6}>
+              <Typography variant="delta">
+                2. Clear all website cache, website will have a performance hit before cache regenerated.
+              </Typography>        
+            </Box>
+            <Box flex={4}>
+              <Button
+                onClick={() => handleSubmit('purge_all')}
+                startIcon={<Trash />}
+                variant="secondary"
+                disabled={isButton2Loading}
+                loading={isButton2Loading}
+              >
+                Clear
+              </Button>
+            </Box>
+          </Flex>
+
+          <Flex gap={4} alignItems="center">
+            <Box flex={6}>
+              <Typography variant="delta">
+                3. Clear AWS CDN cache for all pages and assets. It may takes up to 10 mins.
+              </Typography>        
+            </Box>
+            <Box flex={4}>
+              <Button
+                onClick={() => handleSubmit('purge_cdn')}
+                startIcon={<Trash />}
+                variant="secondary"
+                disabled={isButton3Loading}
+                loading={isButton3Loading}
+              >
+                Clear
+              </Button>
+            </Box>
+          </Flex>
+        </Flex>
+      </Box>
+    </Box>
+  </Main>
   );
 };
 
