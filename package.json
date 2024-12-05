@@ -1,5 +1,5 @@
 {
-  "name": "@10life/strapi-plugin-advanced-cache-manager",
+  "name": "@qdhayana/strapi-plugin-advanced-cache-manager",
   "version": "1.0.6",
   "description": "A Cache Management for Strapi.",
   "strapi": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/10Life/strapi-plugin-advanced-cache-manager.git"
+    "url": "https://github.com/qdhayana/strapi-plugin-advanced-cache-manager.git"
   },
   "keywords": [
     "strapi",
