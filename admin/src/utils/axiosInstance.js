@@ -1,13 +1,12 @@
-/**
- * axios with a custom config.
- */
-
 import axios from 'axios';
-import { auth, wrapAxiosInstance } from '@strapi/helper-plugin';
+import { getFetchClient } from '@strapi/strapi/admin/utils';
 
 const instance = axios.create({
   baseURL: process.env.STRAPI_ADMIN_BACKEND_URL,
 });
+
+// Get the auth from getFetchClient
+const { auth } = getFetchClient();
 
 instance.interceptors.request.use(
   async (config) => {
@@ -37,6 +36,12 @@ instance.interceptors.response.use(
   }
 );
 
-const wrapper = wrapAxiosInstance(instance);
+const customFetchClient = {
+  get: instance.get,
+  post: instance.post,
+  put: instance.put,
+  delete: instance.delete,
+  patch: instance.patch,
+};
 
-export default wrapper;
+export default customFetchClient;

@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Trash from '@strapi/icons/Trash';
+import {Trash} from '@strapi/icons';
 
 const TrashIcon = () => <Trash />;
 

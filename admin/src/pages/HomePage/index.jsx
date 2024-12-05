@@ -6,12 +6,7 @@
 
 import React, {useState, useEffect} from 'react';
 // import PropTypes from 'prop-types';
-import { LoadingIndicatorPage } from '@strapi/helper-plugin';
-import pluginPkg from '../../../../package.json';
-import { Typography } from '@strapi/design-system/Typography';
-import { Button } from '@strapi/design-system/Button';
-import { BaseHeaderLayout, ContentLayout } from '@strapi/design-system/Layout';
-import { Grid, GridItem } from '@strapi/design-system/Grid';
+import { Typography,Button,BaseHeaderLayout, ContentLayout,Grid, GridItem  } from '@strapi/design-system';
 import Trash from '../../components/TrashIcon';
 import cachePurgeRequests from '../../api/cache-request';
 const name = "Purge Cache";

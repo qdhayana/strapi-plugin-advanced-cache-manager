@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Rocket from '@strapi/icons/Rocket';
+import {Rocket} from '@strapi/icons';
 
 const PluginIcon = () => <Rocket />;
 
