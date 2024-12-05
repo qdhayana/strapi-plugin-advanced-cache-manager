@@ -1,6 +1,6 @@
 {
   "name": "@10life/strapi-plugin-advanced-cache-manager",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A Cache Management for Strapi.",
   "strapi": {
     "name": "advanced-cache-manager",
@@ -31,7 +31,7 @@
     "aws-sdk": "^2.1305.0"
   },
   "peerDependencies": {
-     "@strapi/strapi": "^5.0.0"
+    "@strapi/strapi": "^5.0.0"
   },
   "author": {
     "name": "Roy To"
