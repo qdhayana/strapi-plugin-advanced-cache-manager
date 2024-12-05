@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getFetchClient } from '@strapi/strapi/admin/utils';
+import { getFetchClient } from '@strapi/strapi/admin';
 
 const instance = axios.create({
   baseURL: process.env.STRAPI_ADMIN_BACKEND_URL,
