@@ -1,6 +1,6 @@
 {
   "name": "@qdhayana/strapi-plugin-advanced-cache-manager",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "A Cache Management for Strapi.",
   "strapi": {
     "name": "advanced-cache-manager",
