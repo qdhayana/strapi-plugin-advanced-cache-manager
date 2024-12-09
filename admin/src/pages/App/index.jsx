@@ -16,14 +16,7 @@ const App = () => {
     <div>
       <Routes>
         <Route path={`/plugins/${pluginId}`} element={<HomePage/>} />
-        <Route path="*" element={ 
-          <>
-          <div>Ini Kenapa yaa</div>
-          <Page.Error />
-
-          </>
-          
-          } />
+        <Route path="*" element={<HomePage/>} />
       </Routes>
     </div>
   );
