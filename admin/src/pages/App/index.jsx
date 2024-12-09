@@ -16,7 +16,14 @@ const App = () => {
     <div>
       <Routes>
         <Route path={`/plugins/${pluginId}`} element={<HomePage/>} />
-        <Route path="*" element={ <Page.Error />} />
+        <Route path="*" element={ 
+          <>
+          <div>Ini Kenapa yaa</div>
+          <Page.Error />
+
+          </>
+          
+          } />
       </Routes>
     </div>
   );
