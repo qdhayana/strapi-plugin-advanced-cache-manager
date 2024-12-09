@@ -45,7 +45,7 @@ const HomePage = () => {
 
         <Box padding={4} background="neutral0" shadow="filterShadow">
           <Flex direction="column" gap={6}>
-            <Flex gap={4} alignItems="center">
+            <Flex gap={4}>
               <Box flex={6}>
                 <Typography variant="delta">
                   1. Clear content related short cache.
@@ -72,7 +72,7 @@ const HomePage = () => {
               </Box>
             </Flex>
 
-            <Flex gap={4} alignItems="center">
+            <Flex gap={4}>
               <Box flex={6}>
                 <Typography variant="delta">
                   2. Clear all website cache, website will have a performance hit before cache regenerated.
@@ -99,7 +99,7 @@ const HomePage = () => {
               </Box>
             </Flex>
 
-            <Flex gap={4} alignItems="center">
+            <Flex gap={4}>
               <Box flex={6}>
                 <Typography variant="delta">
                   3. Clear AWS CDN cache for all pages and assets. It may takes up to 10 mins.
