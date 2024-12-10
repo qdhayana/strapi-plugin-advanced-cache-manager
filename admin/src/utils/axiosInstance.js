@@ -1,17 +1,14 @@
 import axios from 'axios';
-import { getFetchClient } from '@strapi/strapi/admin';
 
 const instance = axios.create({
   baseURL: process.env.STRAPI_ADMIN_BACKEND_URL,
 });
 
 // Get the auth from getFetchClient
-const { auth } = getFetchClient();
 
 instance.interceptors.request.use(
   async (config) => {
     config.headers = {
-      Authorization: `Bearer ${auth.getToken()}`,
       Accept: 'application/json',
       'Content-Type': 'application/json',
     };
@@ -28,7 +25,6 @@ instance.interceptors.response.use(
   (error) => {
     // whatever you want to do with the error
     if (error.response?.status === 401) {
-      auth.clearAppStorage();
       window.location.reload();
     }
 
