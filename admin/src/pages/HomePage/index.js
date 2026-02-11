@@ -19,10 +19,9 @@ const name = "Purge Cache";
 const HomePage = () => {
   const [isButton1Loading, setIsButton1Loading] = useState(false);
   const [isButton2Loading, setIsButton2Loading] = useState(false);
-  const [isButton3Loading, setIsButton3Loading] = useState(false);
-//  if (isLoading) return <LoadingIndicatorPage/>;
+
   const handleSubmit = async (cache_type) =>{
-  let res = {};
+    let res = {};
     if(cache_type === 'short_cache'){
       setIsButton1Loading(true);
       res = await cachePurgeRequests.short_cache();
@@ -31,10 +30,6 @@ const HomePage = () => {
       setIsButton2Loading(true);
       res = await cachePurgeRequests.purge_all();
       setIsButton2Loading(false);
-    } else if(cache_type === 'purge_cdn'){
-      setIsButton3Loading(true);
-      res = await cachePurgeRequests.purge_cdn();
-      setIsButton3Loading(false);
     }
   };
   return (
@@ -47,9 +42,12 @@ const HomePage = () => {
       <ContentLayout>
       <Typography variant="delta" as="h2"></Typography>
       <Grid gap={6}>
-        
-        <GridItem col={6} s={6}>
-         <Typography variant="delta" as="h2">1. Clear content related short cache.</Typography>        
+
+        <GridItem col={8} s={8}>
+         <Typography variant="delta" as="h2">Clear Short-Lived Cache</Typography>
+         <Typography variant="omega" as="p" style={{ marginTop: '8px', color: '#666' }}>
+           Removes cached GraphQL responses with short TTL (max age). Recommended for clearing content updates.
+         </Typography>
         </GridItem>
         <GridItem col={4} s={4}>
             <Button
@@ -59,12 +57,15 @@ const HomePage = () => {
               disabled={isButton1Loading}
               loading={isButton1Loading}
             >
-              Clear
+              Clear Short Cache
             </Button>
-        </GridItem>   
-      
-        <GridItem col={6} s={6}>  
-          <Typography variant="delta" as="h2">2. Clear all website cache, website will have a peformance hit before cache regenerated.</Typography>        
+        </GridItem>
+
+        <GridItem col={8} s={8}>
+          <Typography variant="delta" as="h2">Clear All GraphQL Cache</Typography>
+          <Typography variant="omega" as="p" style={{ marginTop: '8px', color: '#666' }}>
+            Removes all Apollo GraphQL cached responses from Redis. May cause temporary performance impact until cache is rebuilt.
+          </Typography>
         </GridItem>
         <GridItem col={4} s={4}>
       <Button
@@ -73,24 +74,11 @@ const HomePage = () => {
               size="M"
               disabled={isButton2Loading}
               loading={isButton2Loading}
+              variant="danger-light"
             >
-              Clear
+              Clear All Cache
             </Button>
-        </GridItem>  
-        <GridItem col={6} s={6}>  
-          <Typography variant="delta" as="h2">3. Clear AWS CDN cache for all pages and assets. It may takes up to 10 mins. </Typography>        
         </GridItem>
-        <GridItem col={4} s={4}>
-      <Button
-              onClick={() => handleSubmit('purge_cdn')}
-              startIcon={<Trash />}
-              size="M"
-              disabled={isButton3Loading}
-              loading={isButton3Loading}
-            >
-              Clear
-            </Button>
-        </GridItem>  
       </Grid>
      
       </ContentLayout>
