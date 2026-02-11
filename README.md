@@ -25,7 +25,8 @@ To enable GraphQL caching, put the following code in your GraphQL config in `/co
               if (env('REDIS_HOST')) {
                 const redisCache = new RedisCache({
                     host: env('REDIS_HOST'),
-                    password: env('REDIS_PASSWORD')
+                    password: env('REDIS_PASSWORD'),
+                    prefix: env('REDIS_KEY_PREFIX', 'fqc:') // Add prefix to namespace GraphQL cache keys
                 });
                 redisCache.cacheType = 'RedisCache';
                 return redisCache;
@@ -63,6 +64,7 @@ To enable this plugin, put the following code in `/config/plugin.js`:
     enabled: true,
     config: {
       max_age: env('STRAPI_GRAPHQL_MAX_AGE'),
+      redis_key_prefix: env('REDIS_KEY_PREFIX', 'fqc:'), // Optional: Redis key prefix for GraphQL cache (default: 'fqc:')
       cache_control_matrix: [
         { query: 'usersPermissionsUser', maxAge: 0, scope: "PRIVATE" },
         { query: 'examplePosts', maxAge: env('STRAPI_GRAPHQL_MAX_AGE'), scope: "PUBLIC" },
@@ -80,6 +82,7 @@ Prepare the environment variables as follows:
 ```
 REDIS_HOST
 REDIS_PASSWORD
+REDIS_KEY_PREFIX (optional, default: 'fqc:')
 STRAPI_GRAPHQL_DEFAULT_MAX_AGE
 STRAPI_GRAPHQL_MAX_AGE
 STRAPI_AWS_ACCESS_KEY_ID
@@ -88,9 +91,13 @@ STRAPI_AWS_REGION
 ```
 
 # Cache administration
-You can customize the cache scope and maxAge according to your needs. By default, entities will be cached by STRAPI_GRAPHQL_DEFAULT_MAX_AGE. The cache_control_matrix option can override the cache settings for specific entities by STRAPI_GRAPHQL_MAX_AGE. This plugin provides an admin page to clear the cache according to the cache maxAge. You can choose to clear the short cache (STRAPI_GRAPHQL_DEFAULT_MAX_AGE) or clear all the cache in Redis.
+You can customize the cache scope and maxAge according to your needs. By default, entities will be cached by STRAPI_GRAPHQL_DEFAULT_MAX_AGE. The cache_control_matrix option can override the cache settings for specific entities by STRAPI_GRAPHQL_MAX_AGE.
 
-The admin page also provides the CDN cache clearing function. It will clear all the CDN cache.
+This plugin provides an admin page with two cache clearing options:
+
+1. **Clear Short-Lived Cache**: Removes cached GraphQL responses with short TTL (matching `max_age` config). Recommended for clearing content updates without affecting long-lived cache entries.
+
+2. **Clear All GraphQL Cache**: Removes all Apollo GraphQL cached responses from Redis by matching the configured key prefix (default: `fqc:`). This uses Redis SCAN for safe iteration and will not flush the entire Redis database, preserving other application data. May cause temporary performance impact until cache is rebuilt.
 
 # Road map
 - A scheduled cache clearing feature

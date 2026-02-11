@@ -2,7 +2,7 @@
 const AWS = require('aws-sdk');
 const plugin_model = 'plugin::advanced-cache-manager.record';
 const cdn_items = ['/*'];
-let response = '';
+
 const getConfig = () => {
   const cacheConfig = strapi.config.get('plugin.advanced-cache-manager');
   return cacheConfig;
@@ -83,23 +83,41 @@ const updateInvalidation = async(invalidationId, status) => {
 }
 const purgeRedisCache = (cache) => {
   const config = getConfig();
-  cache.client.keys('*', (err, keys) => {
-    keys.forEach((key, pos) => { 
-      cache.client.get(key, (err, result) =>{
-        if(result){
-          try {
-            let json_obj = JSON.parse(result);
-            const obj_max_age = json_obj?.cachePolicy.maxAge;
-            if(String(obj_max_age) === String(config.max_age)){
-              cache.client.del(key, function(err, succeeded) {
-              });
-            }                                       
-          } catch (error) {
-            strapi.log.info('graphql purgeRedisCache:', error.message);
+  const stream = cache.client.scanStream({
+    match: '*',
+    count: 100
+  });
+
+  stream.on('data', (keys) => {
+    if (keys.length) {
+      keys.forEach((key) => {
+        cache.client.get(key, (err, result) => {
+          if (err) {
+            strapi.log.error('purgeRedisCache get error:', err.message);
+            return;
           }
-        }
+          if (result) {
+            try {
+              let json_obj = JSON.parse(result);
+              const obj_max_age = json_obj?.cachePolicy?.maxAge;
+              if (String(obj_max_age) === String(config.max_age)) {
+                cache.client.del(key, (err) => {
+                  if (err) {
+                    strapi.log.error('purgeRedisCache del error:', err.message);
+                  }
+                });
+              }
+            } catch (error) {
+              strapi.log.error('purgeRedisCache parse error:', error.message);
+            }
+          }
+        });
       });
-    });
+    }
+  });
+
+  stream.on('error', (err) => {
+    strapi.log.error('purgeRedisCache stream error:', err.message);
   });
 }
 const purgeInMemoryLRUCache = (cache) => {
@@ -187,54 +205,91 @@ module.exports = ({ strapi }) => ({
     }
   },
   async purge_all(){
-    response = '';
+    let localResponse = '';
     try {
       const graphqlCache = getGraphqlCache();
       if (graphqlCache.cacheType === 'RedisCache') {
-        response = 'OK';
-        graphqlCache.client.flushdb((err, succeeded) => {});
+        const config = getConfig();
+        const prefix = config.redis_key_prefix || 'fqc:';
+
+        await new Promise((resolve, reject) => {
+          let deletedCount = 0;
+          const stream = graphqlCache.client.scanStream({
+            match: `${prefix}*`,
+            count: 100
+          });
+
+          stream.on('data', (keys) => {
+            if (keys.length) {
+              const pipeline = graphqlCache.client.pipeline();
+              keys.forEach((key) => {
+                pipeline.del(key);
+              });
+              pipeline.exec((err) => {
+                if (err) {
+                  strapi.log.error('purge_all pipeline error:', err.message);
+                } else {
+                  deletedCount += keys.length;
+                }
+              });
+            }
+          });
+
+          stream.on('end', () => {
+            strapi.log.info(`purge_all completed: ${deletedCount} keys deleted`);
+            resolve();
+          });
+
+          stream.on('error', (err) => {
+            strapi.log.error('purge_all stream error:', err.message);
+            reject(err);
+          });
+        });
+
+        localResponse = 'OK';
       } else if (graphqlCache.cacheType === 'InMemoryLRUCache') {
-        response = 'OK';
         graphqlCache.clear();
+        localResponse = 'OK';
       } else {
-        response = 'CACHE TYPE NOT SUPPORT';
+        localResponse = 'CACHE TYPE NOT SUPPORT';
         strapi.log.info("Cache type not support, Please make sure cacheType has been injected to cache object in graphql config");
       }
     } catch (error) {
-      response = error.message;
-      strapi.log.info('Error', error);
+      localResponse = error.message;
+      strapi.log.error('purge_all error:', error);
     }
     try {
-      purgeCacheRecord({'cacheType': 'purge_all' ,'items': 'expire all items', 'invalidationId': '', 'status': response});      
+      await purgeCacheRecord({'cacheType': 'purge_all' ,'items': 'expire all graphql items', 'invalidationId': '', 'status': localResponse});
     } catch (error) {
-      strapi.log.info('Error', error);
+      strapi.log.error('purgeCacheRecord error:', error);
     }
-    return response;
+    return localResponse;
   },
   async short_cache(){
-    response = '';
+    let localResponse = '';
     try {
       const graphqlCache = getGraphqlCache();
       if (graphqlCache.cacheType === 'RedisCache') {
         purgeRedisCache(graphqlCache);
+        localResponse = 'OK';
       } else if (graphqlCache.cacheType === 'InMemoryLRUCache') {
         purgeInMemoryLRUCache(graphqlCache);
+        localResponse = 'OK';
       } else {
         strapi.log.info("Cache type not support, Please make sure cacheType has been injected to cache object in graphql config");
-        response = 'CACHE TYPE NOT SUPPORT';
+        localResponse = 'CACHE TYPE NOT SUPPORT';
       }
-      response = 'OK';
     } catch (error) {
-      response = error.message;
-      strapi.log.info('Error', error);
+      localResponse = error.message;
+      strapi.log.error('short_cache error:', error);
     }
     try {
       const items = getConfig().cache_control_matrix;
       const max_age = getConfig().max_age;
-      purgeCacheRecord({'cacheType': 'short_cache' , 'items': items.filter(item => item.maxAge == max_age).join(','), 'invalidationId': '', 'status': response});      
+      await purgeCacheRecord({'cacheType': 'short_cache' , 'items': items.filter(item => item.maxAge == max_age).join(','), 'invalidationId': '', 'status': localResponse});
     } catch (error) {
-      strapi.log.info('Error', error);
+      strapi.log.error('purgeCacheRecord error:', error);
     }
-    return response;
+    return localResponse;
   }
 });
