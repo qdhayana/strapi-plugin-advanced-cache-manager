@@ -1,6 +1,6 @@
 {
-  "name": "@10life/strapi-plugin-advanced-cache-manager",
-  "version": "1.0.6",
+  "name": "@qdhayana/strapi-plugin-advanced-cache-manager",
+  "version": "1.0.7",
   "description": "A Cache Management for Strapi.",
   "strapi": {
     "name": "advanced-cache-manager",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/10Life/strapi-plugin-advanced-cache-manager.git"
+    "url": "https://github.com/qdhayana/strapi-plugin-advanced-cache-manager.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
