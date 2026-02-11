@@ -1,6 +1,6 @@
 {
   "name": "@10life/strapi-plugin-advanced-cache-manager",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A Cache Management for Strapi.",
   "strapi": {
     "name": "advanced-cache-manager",
